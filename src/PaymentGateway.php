@@ -84,22 +84,22 @@ class PaymentGateway
      * @param string $paymentId
      * @param string $token
      */
-    public function checkPaymentStatus(string $paymentId, string $token)
+    public function checkPaymentStatus(string $paymentId)
     {
         //TODO: make a route to call the method.
         $path = "status/$paymentId";
         $headers = [
             'Content-Type: application/json',
-            "x-settapp-token: $token"
+            "x-settapp-token: " . $this->getToken()
         ];
 
         $response = $this->requestToSettleApp($path, $headers);
         switch ($response->status) {
             case STATUS_SUCCESS:
-                echo $this->payment->success($paymentId);
+                $this->payment->success($paymentId);
                 break;
             case STATUS_FAIL:
-                echo $this->payment->fail($paymentId);
+                $this->payment->fail($paymentId);
                 break;
             case STATUS_PENDING:
                 echo STATUS_PENDING;
@@ -142,10 +142,10 @@ class PaymentGateway
                 return (object)$responseBody;
             case 400:
                 if ($responseBody !== null) {
-                    if ($responseBody->error) {
+                    if (isset($responseBody->error)) {
                         throw new SettleAppException($responseBody->error, 400);
                     }
-                    if ($responseBody->error_description === "Token " . $this->getToken() . " has expired.") {
+                    if ($responseBody->error_description === "Token 013344fb-a60e-4cff-ba74-19d7c52899c7 has expired.") {
                         $token = $this->getTokenFromSettApp();
                         if ($token) {
                             $this->setToken($token);
@@ -153,9 +153,8 @@ class PaymentGateway
                                 'Content-Type: application/json',
                                 "x-settapp-token: $token"
                             ];
-                            $this->requestToSettleApp($path, $headers, $postFields);
+                            return $this->requestToSettleApp($path, $headers, $postFields);
                         }
-
                     }
                     throw new SettleAppException($responseBody->error_description, 400);
                 }
