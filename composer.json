@@ -1,0 +1,22 @@
+{
+    "name": "veselin/settle-online-sdk",
+    "description": "This library will be used to communicate with the Settle payment system.",
+    "type": "library",
+    "require": {
+        "ext-curl": "^7.0",
+        "ext-json": "^1.4"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Veselin Bozhkov",
+            "email": "veselin.bozhkov@infinno.eu"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "veselin\\Settle" : "/"
+        }
+    }
+}
