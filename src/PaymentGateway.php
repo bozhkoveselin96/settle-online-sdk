@@ -23,24 +23,27 @@ class PaymentGateway
     /**
      * @param float $amount
      * @param string $description
-     * @param string $phone
+     * @param string | null $phone
+     * @return false|object
+     * @throws SettleAppException
      */
-    public function pay(float $amount, string $description, string $phone)
+    public function pay(float $amount, string $description, $phone = null)
     {
         if ($this->getToken() === null) {
             $this->setToken($this->getTokenFromSettApp());
         }
-        $order = new Order($amount, $description, $phone, '');
-        $payment = $this->createOrder($order, $this->getToken());
+        $order = new Order($amount, $description, $phone);
+        $payment = $this->createOrder($order);
         if (!$payment) {
             return false;
         }
+
         return $payment;
     }
 
 
     /**
-     * @return string
+     * @return string | void
      * @throws SettleAppException
      */
     private function getTokenFromSettApp() : string
@@ -61,14 +64,15 @@ class PaymentGateway
 
     /**
      * @param Order $order
-     * @param string $token
+     * @return object
+     * @throws SettleAppException
      */
-    private function createOrder(Order $order, string $token)
+    private function createOrder(Order $order)
     {
         $path = 'order';
         $headers = [
             'Content-Type: application/json',
-            "x-settapp-token: $token"
+            "x-settapp-token: " . $this->getToken()
         ];
         $orderParameters = [
             'amount'        => $order->getAmount(),
@@ -83,27 +87,25 @@ class PaymentGateway
     /**
      * @param string $paymentId
      * @param string $token
+     * @throws SettleAppException
      */
-    public function checkPaymentStatus(string $paymentId)
+    public function checkPaymentStatus(string $paymentId, string $token)
     {
         //TODO: make a route to call the method.
         $path = "status/$paymentId";
         $headers = [
             'Content-Type: application/json',
-            "x-settapp-token: " . $this->getToken()
+            "x-settapp-token: $token"
         ];
 
         $response = $this->requestToSettleApp($path, $headers);
         switch ($response->status) {
             case STATUS_SUCCESS:
-                $this->payment->success($paymentId);
-                break;
+                return $this->payment->success($paymentId);
             case STATUS_FAIL:
-                $this->payment->fail($paymentId);
-                break;
+                return $this->payment->fail($paymentId);
             case STATUS_PENDING:
-                echo STATUS_PENDING;
-                break;
+                return STATUS_PENDING;
         }
     }
 
@@ -112,7 +114,7 @@ class PaymentGateway
      * @param string $path
      * @param array $headers
      * @param bool | array $postFields
-     * @return object
+     * @return object | void
      * @throws SettleAppException
      */
     private function requestToSettleApp(string $path, array $headers, $postFields = false)

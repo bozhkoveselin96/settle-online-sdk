@@ -7,14 +7,12 @@ class Order
     private $amount;
     private $description;
     private $phone;
-    private $hookUrl;
 
-    public function __construct($amount, $description, $phone, $hookUrl)
+    public function __construct($amount, $description, $phone)
     {
         $this->amount       = $amount;
         $this->description  = $description;
         $this->phone        = $phone;
-        $this->hookUrl      = $hookUrl;
     }
 
     public function getAmount()
@@ -30,10 +28,5 @@ class Order
     public function getPhone()
     {
         return $this->phone;
-    }
-
-    public function getHookUrl()
-    {
-        return $this->hookUrl;
     }
 }
