@@ -6,4 +6,4 @@ define('SECRET', '');
 define('STATUS_PENDING', 'PENDING');
 define('STATUS_SUCCESS', 'SUCCESS');
 define('STATUS_FAIL', 'FAILED');
-define('BASE_URL', '');
+define('BASE_URL', 'https://settapp.infn.dev/api/');

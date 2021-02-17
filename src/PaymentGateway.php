@@ -10,14 +10,14 @@ class PaymentGateway
     private $userId;
     private $secret;
     private $token;
-    private $payment;
+    private $paymentStatus;
 
-    public function __construct(iPaymentProgress $payment)
+    public function __construct(iPaymentProgress $paymentStatus)
     {
-        $this->payment      = $payment;
-        $this->merchantId   = MERCHANT_ID;
-        $this->userId       = USER_ID;
-        $this->secret       = SECRET;
+        $this->paymentStatus    = $paymentStatus;
+        $this->merchantId       = MERCHANT_ID;
+        $this->userId           = USER_ID;
+        $this->secret           = SECRET;
     }
 
     /**
@@ -101,9 +101,9 @@ class PaymentGateway
         $response = $this->requestToSettleApp($path, $headers);
         switch ($response->status) {
             case STATUS_SUCCESS:
-                return $this->payment->success($paymentId);
+                return $this->paymentStatus->success($paymentId);
             case STATUS_FAIL:
-                return $this->payment->fail($paymentId);
+                return $this->paymentStatus->fail($paymentId);
             case STATUS_PENDING:
                 return STATUS_PENDING;
         }

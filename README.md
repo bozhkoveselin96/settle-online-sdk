@@ -14,9 +14,9 @@
 ### PHP codes for working with the SDK package.
 ```
 // The PaymentGateway object requires an object that it has implemented the iPaymentStatus interface.
-    $status = new PaymentStatus();
-    $paymentGateway = new PaymentGateway($status);
-    $paymentGateway->getToken(); // Save the token
+    $status = new PaymentStatus(); //PaymentStatus is an example. You need to create your own class that implements the iPayment interface.
+    $paymentGateway = new PaymentGateway($status); //In the PaymentGateway class we will make sure to call the success or fail method.
+    $paymentGateway->getToken(); // Save the token.
 ``` 
 ```
 // If you do not specify a phone as a parameter it will only return paymentId. Otherwise it will return paymentId and qrString.
