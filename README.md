@@ -1,5 +1,8 @@
 # Usage
 
+### Execute the command in the terminal:
+`composer require veselin/settle-online-sdk`
+
 ### You need to copy the contents of the config-copy.php file and paste it into a new config.php file at the same level.
 ```
 // In the config.php file, replace: 
@@ -7,8 +10,6 @@
   define('USER_ID', ''); // with your user id
   define('SECRET', ''); // with your secret
 ```
-### Execute the command in the terminal:
-`composer require veselin/settle-online-sdk`
 
 ### PHP codes for working with the SDK package.
 ```
