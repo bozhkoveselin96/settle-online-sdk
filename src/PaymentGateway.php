@@ -23,16 +23,17 @@ class PaymentGateway
     /**
      * @param float $amount
      * @param string $description
+     * @param string $hookUrl
      * @param string | null $phone
      * @return false|object
      * @throws SettleAppException
      */
-    public function pay(float $amount, string $description, $phone = null)
+    public function pay(float $amount, string $description, string $hookUrl, $phone = null)
     {
         if ($this->getToken() === null) {
             $this->setToken($this->getTokenFromSettApp());
         }
-        $order = new Order($amount, $description, $phone);
+        $order = new Order($amount, $description, $hookUrl, $phone);
         $payment = $this->createOrder($order);
         if (!$payment) {
             return false;
@@ -101,9 +102,11 @@ class PaymentGateway
         $response = $this->requestToSettleApp($path, $headers);
         switch ($response->status) {
             case STATUS_SUCCESS:
-                return $this->paymentStatus->success($paymentId);
+                $this->paymentStatus->success($paymentId);
+                break;
             case STATUS_FAIL:
-                return $this->paymentStatus->fail($paymentId);
+                $this->paymentStatus->fail($paymentId);
+                break;
             case STATUS_PENDING:
                 return STATUS_PENDING;
         }
